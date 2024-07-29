@@ -5,7 +5,10 @@ import com.practice.my_vocabulary.exception.NotFoundException;
 import com.practice.my_vocabulary.model.Vocabulary;
 import com.practice.my_vocabulary.repository.VocabularyRepository;
 import com.practice.my_vocabulary.service.VocabularyServiceImp;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,7 +22,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ServiceUnitTest {
     @Mock
     private VocabularyRepository repository;
@@ -27,7 +29,6 @@ public class ServiceUnitTest {
     @InjectMocks
     private VocabularyServiceImp serviceImp;
 
-    @Order(1)
     @Test
     void testCreate() {
         VocabularyRequest request = new VocabularyRequest()
@@ -58,7 +59,6 @@ public class ServiceUnitTest {
         assertEquals(TestData.details, vocabulary.getDetails());
     }
 
-    @Order(2)
     @Test
     public void testFindByIdNotFound() {
         VocabularyRequest request = new VocabularyRequest()
@@ -73,7 +73,6 @@ public class ServiceUnitTest {
         assertThrows(NotFoundException.class, () -> serviceImp.update(request, TestData.id));
     }
 
-    @Order(3)
     @Test
     void testUpdate() {
         VocabularyRequest request = new VocabularyRequest()
@@ -102,7 +101,7 @@ public class ServiceUnitTest {
         when(repository.findById(anyLong())).thenReturn(Optional.of(mockExistingVocabulary));
         when(repository.save(any(Vocabulary.class))).thenReturn(mockUpdateVocabulary);
 
-        Vocabulary vocabulary = serviceImp.update(request ,TestData.id);
+        Vocabulary vocabulary = serviceImp.update(request, TestData.id);
 
         assertNotNull(vocabulary);
         assertEquals(TestUpdate.eng, vocabulary.getEng());

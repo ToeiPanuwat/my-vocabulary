@@ -2,7 +2,7 @@
 spring:
   profiles:
     active:
-      - test
+      - dev
 ---
 server:
   port: 1150
@@ -23,15 +23,15 @@ spring:
     hibernate:
       ddl-auto: create-drop
 ---
-spring:
-  config:
-    activate:
-      on-profile:
-        - test
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driverClassName: org.h2.Driver
-    username: sa
-    password: password
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+#spring:
+#  config:
+#    activate:
+#      on-profile:
+#        - test
+#  datasource:
+#    url: jdbc:h2:mem:testdb
+#    driverClassName: org.h2.Driver
+#    username: sa
+#    password: password
+#  jpa:
+#    database-platform: org.hibernate.dialect.H2Dialect

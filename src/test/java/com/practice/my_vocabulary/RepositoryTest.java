@@ -2,10 +2,7 @@ package com.practice.my_vocabulary;
 
 import com.practice.my_vocabulary.model.Vocabulary;
 import com.practice.my_vocabulary.repository.VocabularyRepository;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,16 +10,15 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) //บอก Spring Boot ให้ใช้ฐานข้อมูลในหน่วยความจำที่พบใน classpath สำหรับการทดสอบ
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 //(replace = Replace.NONE) บอก Spring Boot ว่าจะใช้การตั้งค่าฐานข้อมูลจริงที่กำหนดในไฟล์ .yml
 public class RepositoryTest {
 
     @Autowired
     private VocabularyRepository repository;
 
-    @Order(1)
+
     @Test
     public void testSaveAndFind() {
         Vocabulary vocabulary = new Vocabulary()
@@ -36,6 +32,7 @@ public class RepositoryTest {
 
         assertNotNull(savedVocabulary);
         assertNotNull(savedVocabulary.getId());
+
         assertEquals(TestData.eng, savedVocabulary.getEng());
         assertEquals(TestData.thai, savedVocabulary.getThai());
         assertEquals(TestData.category, savedVocabulary.getCategory());
@@ -44,12 +41,48 @@ public class RepositoryTest {
 
         Vocabulary foundVocabulary = repository.findById(savedVocabulary.getId()).orElse(null);
         assertNotNull(foundVocabulary);
+
         assertEquals(TestData.eng, foundVocabulary.getEng());
         assertEquals(TestData.thai, foundVocabulary.getThai());
         assertEquals(TestData.category, foundVocabulary.getCategory());
         assertEquals(TestData.pronunciation, foundVocabulary.getPronunciation());
         assertEquals(TestData.details, foundVocabulary.getDetails());
     }
+
+    @Test
+    public void testFindAndUpdate() {
+        Vocabulary vocabulary = new Vocabulary()
+                .setEng(TestData.eng)
+                .setThai(TestData.thai)
+                .setCategory(TestData.category)
+                .setPronunciation(TestData.pronunciation)
+                .setDetails(TestData.details);
+
+        Vocabulary savedVocabulary = repository.save(vocabulary);
+
+        Vocabulary existingVocabulary = repository.findById(savedVocabulary.getId()).orElse(null);
+        assertNotNull(existingVocabulary);
+
+        existingVocabulary
+                .setEng(TestUpdate.eng)
+                .setThai(TestUpdate.thai)
+                .setCategory(TestUpdate.category)
+                .setPronunciation(TestUpdate.pronunciation)
+                .setDetails(TestUpdate.details);
+
+        Vocabulary UpdatedVocabulary = repository.save(existingVocabulary);
+
+        assertNotNull(UpdatedVocabulary);
+
+        assertEquals(vocabulary.getId(), UpdatedVocabulary.getId());
+        assertEquals(TestUpdate.eng, UpdatedVocabulary.getEng());
+        assertEquals(TestUpdate.thai, UpdatedVocabulary.getThai());
+        assertEquals(TestUpdate.category, UpdatedVocabulary.getCategory());
+        assertEquals(TestUpdate.pronunciation, UpdatedVocabulary.getPronunciation());
+        assertEquals(TestUpdate.details, UpdatedVocabulary.getDetails());
+
+    }
+
 
     interface TestData {
         String eng = "have";
