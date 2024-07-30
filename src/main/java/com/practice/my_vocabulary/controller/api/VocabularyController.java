@@ -42,4 +42,15 @@ public class VocabularyController {
     public void delete(@PathVariable long id) {
         vocabularyService.delete(id);
     }
+
+    @GetMapping(path = "/search", params = "eng")
+    public ResponseEntity<List<Vocabulary>> getVocabularyByEng(@RequestParam String eng) {
+        return ResponseEntity.ok(vocabularyService.getVocabularyByEng(eng));
+    }
+
+    @GetMapping(path = "/search", params = "thai")
+    public ResponseEntity<List<Vocabulary>> getVocabularyByThai(@RequestParam String thai) {
+        return ResponseEntity.ok(vocabularyService.getVocabularyByThai(thai));
+    }
+
 }

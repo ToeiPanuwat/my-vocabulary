@@ -5,20 +5,18 @@ import com.practice.my_vocabulary.exception.NotFoundException;
 import com.practice.my_vocabulary.model.Vocabulary;
 import com.practice.my_vocabulary.repository.VocabularyRepository;
 import com.practice.my_vocabulary.service.VocabularyServiceImp;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -133,6 +131,59 @@ public class ServiceUnitTest {
         Optional<Vocabulary> optDelete = repository.findById(TestData.id);
         assertTrue(optDelete.isEmpty());
     }
+
+    @Test
+    public void testSearchEng() {
+        Vocabulary mockDelete = new Vocabulary();
+        mockDelete.setId(TestData.id);
+        mockDelete.setEng(TestData.eng);
+        mockDelete.setThai(TestData.thai);
+        mockDelete.setCategory(TestData.category);
+        mockDelete.setPronunciation(TestData.pronunciation);
+        mockDelete.setDetails(TestData.details);
+
+        when(repository.findByEng(anyString())).thenReturn(List.of(mockDelete));
+
+        List<Vocabulary> vocabularies = serviceImp.getVocabularyByEng(TestData.eng);
+
+        assertEquals(1, vocabularies.size());
+        assertEquals(TestData.eng, vocabularies.get(0).getEng());
+        assertEquals(TestData.thai, vocabularies.get(0).getThai());
+    }
+
+    @Test
+    public void testSearchEngNotFound() {
+        when(repository.findByEng(anyString())).thenReturn(Collections.emptyList());
+
+        assertThrows(NotFoundException.class, () -> serviceImp.getVocabularyByEng("nonexistent"));
+    }
+
+    @Test
+    public void testSearchThai() {
+        Vocabulary mockDelete = new Vocabulary();
+        mockDelete.setId(TestData.id);
+        mockDelete.setEng(TestData.eng);
+        mockDelete.setThai(TestData.thai);
+        mockDelete.setCategory(TestData.category);
+        mockDelete.setPronunciation(TestData.pronunciation);
+        mockDelete.setDetails(TestData.details);
+
+        when(repository.findByThai(anyString())).thenReturn(List.of(mockDelete));
+
+        List<Vocabulary> vocabularies = serviceImp.getVocabularyByThai(TestData.thai);
+
+        assertEquals(1, vocabularies.size());
+        assertEquals(TestData.eng, vocabularies.get(0).getEng());
+        assertEquals(TestData.thai, vocabularies.get(0).getThai());
+    }
+
+    @Test
+    public void testSearchThaiNotFound() {
+        when(repository.findByThai(anyString())).thenReturn(Collections.emptyList());
+
+        assertThrows(NotFoundException.class, () -> serviceImp.getVocabularyByThai("nonexistent"));
+    }
+
 
 
 

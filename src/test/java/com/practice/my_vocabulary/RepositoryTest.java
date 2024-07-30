@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -104,6 +105,49 @@ public class RepositoryTest {
         assertNotNull(savedVocabulary);
         assertNotNull(existingVocabulary);
         assertTrue(optDelete.isEmpty());
+    }
+
+    @Test
+    public void testSearchEng() {
+        Vocabulary vocabulary = new Vocabulary()
+                .setEng(TestData.eng)
+                .setThai(TestData.thai)
+                .setCategory(TestData.category)
+                .setPronunciation(TestData.pronunciation)
+                .setDetails(TestData.details);
+
+        Vocabulary savedVocabulary = repository.save(vocabulary);
+        List<Vocabulary> foundVocabularies = repository.findByEng(TestData.eng);
+
+        assertNotNull(savedVocabulary);
+        assertEquals(1, foundVocabularies.size());
+        Vocabulary found = foundVocabularies.get(0);
+        assertEquals(TestData.eng, found.getEng());
+        assertEquals(TestData.thai, found.getThai());
+        assertEquals(TestData.category, found.getCategory());
+        assertEquals(TestData.pronunciation, found.getPronunciation());
+        assertEquals(TestData.details, found.getDetails());
+    }
+    @Test
+    public void testSearchThai() {
+        Vocabulary vocabulary = new Vocabulary()
+                .setEng(TestData.eng)
+                .setThai(TestData.thai)
+                .setCategory(TestData.category)
+                .setPronunciation(TestData.pronunciation)
+                .setDetails(TestData.details);
+
+        Vocabulary savedVocabulary = repository.save(vocabulary);
+        List<Vocabulary> foundVocabularies = repository.findByThai(TestData.thai);
+
+        assertNotNull(savedVocabulary);
+        assertEquals(1, foundVocabularies.size());
+        Vocabulary found = foundVocabularies.get(0);
+        assertEquals(TestData.eng, found.getEng());
+        assertEquals(TestData.thai, found.getThai());
+        assertEquals(TestData.category, found.getCategory());
+        assertEquals(TestData.pronunciation, found.getPronunciation());
+        assertEquals(TestData.details, found.getDetails());
     }
 
 

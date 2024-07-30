@@ -52,4 +52,18 @@ public class VocabularyServiceImp implements VocabularyService {
                 .orElseThrow(() -> new NotFoundException(id));
         vocabularyRepository.deleteById(id);
     }
+
+    @Override
+    public List<Vocabulary> getVocabularyByEng(String eng) {
+        List<Vocabulary> vocabularies = vocabularyRepository.findByEng(eng);
+        if (vocabularies.isEmpty()) throw NotFoundException.vocabularyNotFound();
+        return vocabularies;
+    }
+
+    @Override
+    public List<Vocabulary> getVocabularyByThai(String thai) {
+        List<Vocabulary> vocabularies = vocabularyRepository.findByThai(thai);
+        if (vocabularies.isEmpty()) throw NotFoundException.vocabularyNotFound();
+        return vocabularies;
+    }
 }

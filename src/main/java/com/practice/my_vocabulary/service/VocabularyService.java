@@ -14,4 +14,8 @@ public interface VocabularyService {
     Vocabulary update(VocabularyRequest request, long id);
 
     void delete(long id);
+
+    List<Vocabulary> getVocabularyByEng(String eng);
+
+    List<Vocabulary> getVocabularyByThai(String thai);
 }
