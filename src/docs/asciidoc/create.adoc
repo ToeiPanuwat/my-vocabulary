@@ -1,0 +1,12 @@
+= API Documentation
+
+== Vocabulary API
+
+=== Create Vocabulary
+
+[subs="attributes+"]
+include::{snippets}/create-vocabulary/curl-request.adoc[]
+include::{snippets}/create-vocabulary/http-request.adoc[]
+include::{snippets}/create-vocabulary/http-response.adoc[]
+include::{snippets}/create-vocabulary/request-body.adoc[]
+include::{snippets}/create-vocabulary/response-body.adoc[]

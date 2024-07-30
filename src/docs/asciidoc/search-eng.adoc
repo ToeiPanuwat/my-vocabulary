@@ -1,0 +1,12 @@
+= API Documentation
+
+== Vocabulary API
+
+=== SearchEng Vocabulary
+
+[subs="attributes+"]
+include::{snippets}/search-eng-vocabulary/curl-request.adoc[]
+include::{snippets}/search-eng-vocabulary/http-request.adoc[]
+include::{snippets}/search-eng-vocabulary/http-response.adoc[]
+include::{snippets}/search-eng-vocabulary/request-body.adoc[]
+include::{snippets}/search-eng-vocabulary/response-body.adoc[]

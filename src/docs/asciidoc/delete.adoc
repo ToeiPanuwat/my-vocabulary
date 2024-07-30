@@ -1,0 +1,12 @@
+= API Documentation
+
+== Vocabulary API
+
+=== Delete Vocabulary
+
+[subs="attributes+"]
+include::{snippets}/delete-vocabulary/curl-request.adoc[]
+include::{snippets}/delete-vocabulary/http-request.adoc[]
+include::{snippets}/delete-vocabulary/http-response.adoc[]
+include::{snippets}/delete-vocabulary/request-body.adoc[]
+include::{snippets}/delete-vocabulary/response-body.adoc[]

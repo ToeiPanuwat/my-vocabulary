@@ -1,0 +1,12 @@
+= API Documentation
+
+== Vocabulary API
+
+=== Update Vocabulary
+
+[subs="attributes+"]
+include::{snippets}/update-vocabulary/curl-request.adoc[]
+include::{snippets}/update-vocabulary/http-request.adoc[]
+include::{snippets}/update-vocabulary/http-response.adoc[]
+include::{snippets}/update-vocabulary/request-body.adoc[]
+include::{snippets}/update-vocabulary/response-body.adoc[]
