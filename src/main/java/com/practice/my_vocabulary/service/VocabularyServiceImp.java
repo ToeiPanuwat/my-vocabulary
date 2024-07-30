@@ -36,7 +36,7 @@ public class VocabularyServiceImp implements VocabularyService {
     @Override
     public Vocabulary update(VocabularyRequest request, long id) {
         Vocabulary existingVocabulary = vocabularyRepository.findById(id)
-                .orElseThrow(NotFoundException::vocabularyNotFound);
+                        .orElseThrow(() -> new NotFoundException(id));
         existingVocabulary
                 .setEng(request.getEng())
                 .setThai(request.getThai())
@@ -44,5 +44,12 @@ public class VocabularyServiceImp implements VocabularyService {
                 .setPronunciation(request.getPronunciation())
                 .setDetails(request.getDetails());
         return vocabularyRepository.save(existingVocabulary);
+    }
+
+    @Override
+    public void delete(long id) {
+        Vocabulary existingVocabulary = vocabularyRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(id));
+        vocabularyRepository.deleteById(id);
     }
 }

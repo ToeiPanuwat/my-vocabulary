@@ -19,6 +19,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,7 +31,7 @@ public class ServiceUnitTest {
     private VocabularyServiceImp serviceImp;
 
     @Test
-    void testCreate() {
+    public void testCreate() {
         VocabularyRequest request = new VocabularyRequest()
                 .setEng(TestData.eng)
                 .setThai(TestData.thai)
@@ -74,7 +75,7 @@ public class ServiceUnitTest {
     }
 
     @Test
-    void testUpdate() {
+    public void testUpdate() {
         VocabularyRequest request = new VocabularyRequest()
                 .setEng(TestUpdate.eng)
                 .setThai(TestUpdate.thai)
@@ -90,26 +91,50 @@ public class ServiceUnitTest {
         mockExistingVocabulary.setPronunciation(TestData.pronunciation);
         mockExistingVocabulary.setDetails(TestData.details);
 
-        Vocabulary mockUpdateVocabulary = new Vocabulary();
-        mockUpdateVocabulary.setId(TestData.id);
-        mockUpdateVocabulary.setEng(TestUpdate.eng);
-        mockUpdateVocabulary.setThai(TestUpdate.thai);
-        mockUpdateVocabulary.setCategory(TestUpdate.category);
-        mockUpdateVocabulary.setPronunciation(TestUpdate.pronunciation);
-        mockUpdateVocabulary.setDetails(TestUpdate.details);
+        Vocabulary mockUpdate = new Vocabulary();
+        mockUpdate.setId(TestUpdate.id);
+        mockUpdate.setEng(TestUpdate.eng);
+        mockUpdate.setThai(TestUpdate.thai);
+        mockUpdate.setCategory(TestUpdate.category);
+        mockUpdate.setPronunciation(TestUpdate.pronunciation);
+        mockUpdate.setDetails(TestUpdate.details);
 
         when(repository.findById(anyLong())).thenReturn(Optional.of(mockExistingVocabulary));
-        when(repository.save(any(Vocabulary.class))).thenReturn(mockUpdateVocabulary);
+        when(repository.save(any(Vocabulary.class))).thenReturn(mockUpdate);
 
         Vocabulary vocabulary = serviceImp.update(request, TestData.id);
 
         assertNotNull(vocabulary);
-        assertEquals(TestUpdate.eng, vocabulary.getEng());
-        assertEquals(TestUpdate.thai, vocabulary.getThai());
-        assertEquals(TestUpdate.category, vocabulary.getCategory());
-        assertEquals(TestUpdate.pronunciation, vocabulary.getPronunciation());
-        assertEquals(TestUpdate.details, vocabulary.getDetails());
+        assertEquals(mockUpdate.getEng(), vocabulary.getEng());
+        assertEquals(mockUpdate.getThai(), vocabulary.getThai());
+        assertEquals(mockUpdate.getCategory(), vocabulary.getCategory());
+        assertEquals(mockUpdate.getPronunciation(), vocabulary.getPronunciation());
+        assertEquals(mockUpdate.getDetails(), vocabulary.getDetails());
     }
+
+    @Test
+    public void delete() {
+        Vocabulary mockDelete = new Vocabulary();
+        mockDelete.setId(TestData.id);
+        mockDelete.setEng(TestData.eng);
+        mockDelete.setThai(TestData.thai);
+        mockDelete.setCategory(TestData.category);
+        mockDelete.setPronunciation(TestData.pronunciation);
+        mockDelete.setDetails(TestData.details);
+
+        when(repository.findById(anyLong())).thenReturn(Optional.of(mockDelete));
+
+        doNothing().when(repository).deleteById(anyLong());
+
+        serviceImp.delete(TestData.id);
+
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+
+        Optional<Vocabulary> optDelete = repository.findById(TestData.id);
+        assertTrue(optDelete.isEmpty());
+    }
+
+
 
     interface TestData {
         long id = 1L;
@@ -121,6 +146,7 @@ public class ServiceUnitTest {
     }
 
     interface TestUpdate {
+        long id = 1L;
         String eng = "run";
         String thai = "วิ่ง";
         String category = "verb";

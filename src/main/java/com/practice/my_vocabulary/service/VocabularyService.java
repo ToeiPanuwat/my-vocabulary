@@ -12,4 +12,6 @@ public interface VocabularyService {
     Vocabulary create(VocabularyRequest request);
 
     Vocabulary update(VocabularyRequest request, long id);
+
+    void delete(long id);
 }

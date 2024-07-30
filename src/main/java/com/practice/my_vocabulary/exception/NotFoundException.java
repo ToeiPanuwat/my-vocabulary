@@ -5,6 +5,10 @@ public class NotFoundException extends RuntimeException {
         super(message);
     }
 
+    public NotFoundException(long id) {
+        super("Could not find vocabulary ID : " + id);
+    }
+
     public static NotFoundException vocabularyNotFound() {
         return new NotFoundException("Could not find vocabulary.");
     }

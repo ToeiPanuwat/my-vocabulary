@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -20,7 +21,7 @@ public class RepositoryTest {
 
 
     @Test
-    public void testSaveAndFind() {
+    public void testCreate() {
         Vocabulary vocabulary = new Vocabulary()
                 .setEng(TestData.eng)
                 .setThai(TestData.thai)
@@ -50,7 +51,7 @@ public class RepositoryTest {
     }
 
     @Test
-    public void testFindAndUpdate() {
+    public void testUpdate() {
         Vocabulary vocabulary = new Vocabulary()
                 .setEng(TestData.eng)
                 .setThai(TestData.thai)
@@ -80,7 +81,29 @@ public class RepositoryTest {
         assertEquals(TestUpdate.category, UpdatedVocabulary.getCategory());
         assertEquals(TestUpdate.pronunciation, UpdatedVocabulary.getPronunciation());
         assertEquals(TestUpdate.details, UpdatedVocabulary.getDetails());
+    }
 
+    @Test
+    public void testDelete() {
+        Vocabulary vocabulary = new Vocabulary()
+                .setEng(TestData.eng)
+                .setThai(TestData.thai)
+                .setCategory(TestData.category)
+                .setPronunciation(TestData.pronunciation)
+                .setDetails(TestData.details);
+
+        Vocabulary savedVocabulary = repository.save(vocabulary);
+        long id = savedVocabulary.getId();
+
+        Vocabulary existingVocabulary = repository.findById(id).orElse(null);
+
+        repository.deleteById(id);
+
+        Optional<Vocabulary> optDelete = repository.findById(id);
+
+        assertNotNull(savedVocabulary);
+        assertNotNull(existingVocabulary);
+        assertTrue(optDelete.isEmpty());
     }
 
 

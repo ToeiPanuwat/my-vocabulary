@@ -36,4 +36,10 @@ public class VocabularyController {
                                            @PathVariable long id) {
         return ResponseEntity.ok(vocabularyService.update(request, id));
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable long id) {
+        vocabularyService.delete(id);
+    }
 }

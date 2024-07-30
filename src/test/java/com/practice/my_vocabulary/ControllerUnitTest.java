@@ -5,10 +5,7 @@ import com.practice.my_vocabulary.controller.api.VocabularyController;
 import com.practice.my_vocabulary.controller.request.VocabularyRequest;
 import com.practice.my_vocabulary.model.Vocabulary;
 import com.practice.my_vocabulary.service.VocabularyServiceImp;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,10 +13,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -33,7 +31,7 @@ public class ControllerUnitTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private VocabularyServiceImp vocabularyServiceImp;
+    private VocabularyServiceImp serviceImp;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -53,7 +51,7 @@ public class ControllerUnitTest {
                 .setPronunciation(TestData.pronunciation)
                 .setDetails(TestData.details);
 
-        when(vocabularyServiceImp.create(any(VocabularyRequest.class))).thenReturn(mockVocabulary);
+        when(serviceImp.create(any(VocabularyRequest.class))).thenReturn(mockVocabulary);
 
         mockMvc.perform(post("/api/v1/vocabularies")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -82,7 +80,7 @@ public class ControllerUnitTest {
                 .setPronunciation(TestUpdate.pronunciation)
                 .setDetails(TestUpdate.details);
 
-        when(vocabularyServiceImp.update(any(VocabularyRequest.class), anyLong())).thenReturn(mockVocabulary);
+        when(serviceImp.update(any(VocabularyRequest.class), anyLong())).thenReturn(mockVocabulary);
 
         mockMvc.perform(put("/api/v1/vocabularies/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +91,18 @@ public class ControllerUnitTest {
                 .andExpect(jsonPath("$.category").value(TestUpdate.category))
                 .andExpect(jsonPath("$.pronunciation").value(TestUpdate.pronunciation))
                 .andExpect(jsonPath("$.details").value(TestUpdate.details));
+    }
 
+    @Test
+    void delete() throws Exception {
+        long id = 1L;
+        doNothing().when(serviceImp).delete(anyLong());
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/vocabularies/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        verify(serviceImp).delete(id);
     }
 
     interface TestData {
