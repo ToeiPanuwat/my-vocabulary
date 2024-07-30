@@ -15,11 +15,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,7 +38,7 @@ public class ControllerUnitTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void testCreate() throws Exception {
+    public void testCreate() throws Exception {
         VocabularyRequest request = new VocabularyRequest()
                 .setEng(TestData.eng)
                 .setThai(TestData.thai)
@@ -65,7 +67,7 @@ public class ControllerUnitTest {
     }
 
     @Test
-    void testUpdate() throws Exception {
+    public void testUpdate() throws Exception {
         VocabularyRequest request = new VocabularyRequest()
                 .setEng(TestUpdate.eng)
                 .setThai(TestUpdate.thai)
@@ -94,7 +96,7 @@ public class ControllerUnitTest {
     }
 
     @Test
-    void delete() throws Exception {
+    public void testDelete() throws Exception {
         long id = 1L;
         doNothing().when(serviceImp).delete(anyLong());
 
@@ -103,6 +105,71 @@ public class ControllerUnitTest {
                 .andExpect(status().isNoContent());
 
         verify(serviceImp).delete(id);
+    }
+
+    @Test
+    public void testSearchEng() throws Exception {
+        Vocabulary mockVocabulary = new Vocabulary();
+        mockVocabulary.setEng(TestData.eng);
+        mockVocabulary.setThai(TestData.thai);
+        mockVocabulary.setCategory(TestData.category);
+        mockVocabulary.setPronunciation(TestData.pronunciation);
+        mockVocabulary.setDetails(TestData.details);
+
+        when(serviceImp.getVocabularyByEng(anyString())).thenReturn(List.of(mockVocabulary));
+
+        mockMvc.perform(get("/api/v1/vocabularies/search")
+                .param("eng", TestData.eng)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].eng").value(TestData.eng))
+                .andExpect(jsonPath("$[0].thai").value(TestData.thai))
+                .andExpect(jsonPath("$[0].category").value(TestData.category))
+                .andExpect(jsonPath("$[0].pronunciation").value(TestData.pronunciation))
+                .andExpect(jsonPath("$[0].details").value(TestData.details));
+    }
+
+    @Test
+    public void testSearchThai() throws Exception {
+        Vocabulary mockVocabulary = new Vocabulary();
+        mockVocabulary.setEng(TestData.eng);
+        mockVocabulary.setThai(TestData.thai);
+        mockVocabulary.setCategory(TestData.category);
+        mockVocabulary.setPronunciation(TestData.pronunciation);
+        mockVocabulary.setDetails(TestData.details);
+
+        when(serviceImp.getVocabularyByThai(anyString())).thenReturn(List.of(mockVocabulary));
+        mockMvc.perform(get("/api/v1/vocabularies/search")
+                .param("thai", TestData.thai)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].eng").value(TestData.eng))
+                .andExpect(jsonPath("$[0].thai").value(TestData.thai))
+                .andExpect(jsonPath("$[0].category").value(TestData.category))
+                .andExpect(jsonPath("$[0].pronunciation").value(TestData.pronunciation))
+                .andExpect(jsonPath("$[0].details").value(TestData.details));
+    }
+
+    @Test
+    public void testSearchEngNotFound() throws Exception {
+        when(serviceImp.getVocabularyByEng(anyString())).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/v1/vocabularies/search")
+                .param("eng", "nonexistent")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    public void testSearchThaiNotFound() throws Exception {
+        when(serviceImp.getVocabularyByThai(anyString())).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/v1/vocabularies/search")
+                        .param("thai", "ไม่มี")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
     }
 
     interface TestData {
